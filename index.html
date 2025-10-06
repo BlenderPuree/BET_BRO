@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Player Props - Oct 6 MNF</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">🏈 NFL Player Props</h1>
+                <div class="game-focus">
+                    <span class="focus-title">Today's Game: Chiefs @ Jaguars 8:15 PM ET</span>
+                </div>
+                <div class="status-bar">
+                    <div class="connection-status">
+                        <span class="status-dot disconnected"></span>
+                        <span class="status-text">Demo Mode</span>
+                    </div>
+                    <div class="last-update">
+                        Last update: <span id="last-update-time">--:--</span> MDT
+                    </div>
+                    <button class="refresh-btn" id="refresh-btn">
+                        <span class="refresh-icon">↻</span>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="props">Live NFL Props</button>
+            <button class="tab-btn" data-tab="slip">Entry Slip <span class="slip-count" id="slip-count">0</span></button>
+            <button class="tab-btn" data-tab="api">API Setup</button>
+            <button class="tab-btn" data-tab="guide">Guide</button>
+        </nav>
+
+        <!-- Tab Content -->
+        <main class="tab-content">
+            <!-- Live NFL Props Tab -->
+            <div class="tab-pane active" id="props-tab">
+                <div class="tab-header">
+                    <h2>Monday Night Football Player Props</h2>
+                    <div class="props-meta">
+                        <span class="props-count">8 props available</span>
+                        <span class="auto-refresh">Auto-refresh: 30s</span>
+                    </div>
+                </div>
+                <div class="loading-overlay" id="loading-overlay">
+                    <div class="loading-spinner"></div>
+                    <p>Updating props...</p>
+                </div>
+                <div class="props-grid" id="props-grid">
+                    <!-- Props will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Entry Slip Tab -->
+            <div class="tab-pane" id="slip-tab">
+                <div class="tab-header">
+                    <h2>Entry Slip</h2>
+                    <div class="slip-meta">
+                        <span class="picks-count">0/8 picks selected</span>
+                        <span class="payout-multiplier">Select 2+ for payout</span>
+                    </div>
+                </div>
+                <div class="slip-content">
+                    <div class="empty-slip" id="empty-slip">
+                        <div class="empty-state">
+                            <span class="empty-icon">📝</span>
+                            <h3>No picks selected</h3>
+                            <p>Go to Live NFL Props and select MORE or LESS on player props to build your slip.</p>
+                        </div>
+                    </div>
+                    <div class="selected-picks" id="selected-picks">
+                        <!-- Selected picks will be populated here -->
+                    </div>
+                    <div class="slip-actions">
+                        <button class="btn btn--outline" id="clear-all-btn" disabled>Clear All</button>
+                        <button class="btn btn--primary slip-submit" id="submit-btn" disabled>Submit Entry</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Setup Tab -->
+            <div class="tab-pane" id="api-tab">
+                <div class="tab-header">
+                    <h2>API Configuration</h2>
+                    <p>Configure your API keys to get live data sources</p>
+                </div>
+                <div class="api-sources">
+                    <div class="api-source">
+                        <div class="api-info">
+                            <h3>The Odds API</h3>
+                            <p>Live player props from DraftKings, FanDuel, BetMGM</p>
+                            <a href="https://the-odds-api.com" target="_blank" class="api-link">Get API Key →</a>
+                        </div>
+                        <div class="api-controls">
+                            <div class="api-status">
+                                <span class="status-dot disconnected" id="odds-status"></span>
+                                <span class="status-label">Not Connected</span>
+                            </div>
+                            <div class="api-input-group">
+                                <input type="password" class="form-control" id="odds-api-key" placeholder="Enter API key">
+                                <button class="btn btn--primary" onclick="saveApiKey('odds')">Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="api-source">
+                        <div class="api-info">
+                            <h3>BALLDONTLIE NFL API</h3>
+                            <p>Player stats, injury reports, team data</p>
+                            <a href="https://balldontlie.io" target="_blank" class="api-link">Get API Key →</a>
+                        </div>
+                        <div class="api-controls">
+                            <div class="api-status">
+                                <span class="status-dot disconnected" id="balldontlie-status"></span>
+                                <span class="status-label">Not Connected</span>
+                            </div>
+                            <div class="api-input-group">
+                                <input type="password" class="form-control" id="balldontlie-key" placeholder="Enter API key">
+                                <button class="btn btn--primary" onclick="saveApiKey('balldontlie')">Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="api-source">
+                        <div class="api-info">
+                            <h3>OpenWeatherMap API</h3>
+                            <p>Weather conditions at NFL stadiums</p>
+                            <a href="https://openweathermap.org/api" target="_blank" class="api-link">Get API Key →</a>
+                        </div>
+                        <div class="api-controls">
+                            <div class="api-status">
+                                <span class="status-dot disconnected" id="weather-status"></span>
+                                <span class="status-label">Not Connected</span>
+                            </div>
+                            <div class="api-input-group">
+                                <input type="password" class="form-control" id="weather-key" placeholder="Enter API key">
+                                <button class="btn btn--primary" onclick="saveApiKey('weather')">Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="api-source">
+                        <div class="api-info">
+                            <h3>ESPN NFL API</h3>
+                            <p>Game schedules, scores, team info (Free)</p>
+                            <a href="https://espn.com" target="_blank" class="api-link">Learn More →</a>
+                        </div>
+                        <div class="api-controls">
+                            <div class="api-status">
+                                <span class="status-dot connected" id="espn-status"></span>
+                                <span class="status-label">Connected</span>
+                            </div>
+                            <div class="api-input-group">
+                                <input type="text" class="form-control" value="Free API - No key required" disabled>
+                                <button class="btn btn--secondary" disabled>Connected</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guide Tab -->
+            <div class="tab-pane" id="guide-tab">
+                <div class="tab-header">
+                    <h2>How to Use This App</h2>
+                    <p>Your guide to NFL player props betting for Monday Night Football</p>
+                    <div class="guide-game-focus"><strong>Today's matchup:</strong> Chiefs @ Jaguars, 8:15 PM ET, EverBank Stadium</div>
+                </div>
+                <div class="guide-content">
+                    <div class="guide-section">
+                        <h3>📈 Understanding Player Props</h3>
+                        <p>Player props are bets on individual player statistics like passing yards, rushing yards, receptions, or touchdowns. You bet whether a player will go OVER (more) or UNDER (less) a set line for tonight's only NFL matchup.</p>
+                        <ul>
+                            <li><strong>Line:</strong> The predicted stat for tonight's game</li>
+                            <li><strong>MORE:</strong> Player will exceed the line</li>
+                            <li><strong>LESS:</strong> Player will stay under the line</li>
+                        </ul>
+                    </div>
+                    <div class="guide-section">
+                        <h3>🎯 Using This App</h3>
+                        <ol>
+                            <li><strong>Browse:</strong> Only Chiefs and Jaguars players are shown for tonight's game</li>
+                            <li><strong>Select:</strong> Choose MORE or LESS to build your entry slip (max 8)</li>
+                            <li><strong>Manage:</strong> View, edit, or clear picks from your slip</li>
+                            <li><strong>Configure APIs:</strong> Add keys for live sportsbook, player stats, and weather</li>
+                            <li><strong>Refresh:</strong> Manual and auto-refresh keep props up to date</li>
+                        </ol>
+                    </div>
+                    <div class="guide-section">
+                        <h3>💰 Payout Multipliers</h3>
+                        <div class="payout-table">
+                            <div class="payout-row"><span>2 picks</span><span>3x payout</span></div>
+                            <div class="payout-row"><span>3 picks</span><span>6x payout</span></div>
+                            <div class="payout-row"><span>4 picks</span><span>12x payout</span></div>
+                            <div class="payout-row"><span>5 picks</span><span>25x payout</span></div>
+                            <div class="payout-row"><span>6 picks</span><span>50x payout</span></div>
+                            <div class="payout-row"><span>7 picks</span><span>100x payout</span></div>
+                            <div class="payout-row"><span>8 picks</span><span>200x payout</span></div>
+                        </div>
+                    </div>
+                    <div class="guide-section">
+                        <h3>⚡ Features</h3>
+                        <ul>
+                            <li>All props for tonight's Chiefs @ Jaguars matchup only</li>
+                            <li>Live sportsbook lines with confidence levels and expert analysis</li>
+                            <li>Weather at EverBank Stadium: Clear, 79°F, Wind 8 mph, 72% humidity</li>
+                            <li>Auto-refresh every 30 seconds, manual refresh button</li>
+                            <li>Line movement indicators (↗ up, ↘ down)</li>
+                            <li>Mobile-responsive design</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
